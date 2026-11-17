@@ -309,6 +309,9 @@ class Setup:
                 for f in x['files']:
                     files[f['name']] = (kind, x['id'], f['size'])
         places = [self.default_parent]
+        existing = self.default_parent / DATA_NAME
+        if existing.is_dir():
+            places += [existing / 'models', existing]      # a library already installed where setup would put it
         if self.current:
             places += [self.current / 'models', self.current]
         places += regions.search_dirs()      # Downloads, Desktop, Documents and anything named by LASTBOOK_MAPS

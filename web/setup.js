@@ -253,7 +253,7 @@
       ai = aiFits() || has
         ? `<label class="s-opt s-ai"><input type="checkbox" id="aiBox"${choice.ai || has ? ' checked' : ''}${has ? ' disabled' : ''}>
             <span class="s-opt-in"><span class="s-opt-h"><b>Local AI</b>${has ? '<span class="s-badge here">Installed</span>' : (S.recommend || {}).ai && !c ? '<span class="s-badge rec">Suggested</span>' : '<span class="s-badge">Optional</span>'}</span>
-            <small>Answers questions from the library, in plain words. Works offline.</small>
+            <small>Answers questions from the library, in plain words. Answers in the language you ask in. Works offline.</small>
             <span class="s-sizes">${has ? 'On this computer' : foundFor('model') ? '<span>Already downloaded</span>' : `<span>${T('About')} ${size(m.size)} ${T('download')}</span>`}</span></span></label>`
         : `<div class="s-opt s-ai off" role="group" aria-label="Local AI"><span class="s-opt-in"><span class="s-opt-h"><b>Local AI</b><span class="s-badge later">Not for this computer</span></span>
             <small>${esc((S.hardware.ai && S.hardware.ai.why) || 'This computer does not have enough memory for it.')}</small></span></div>`;

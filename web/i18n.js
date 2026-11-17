@@ -579,6 +579,8 @@
       'Use Salvar em qualquer página, vídeo, artigo ou resposta para guardar aqui.',
     'Answers questions from the library, in plain words. Works offline.':
       'Responde perguntas a partir da biblioteca, em linguagem simples. Funciona offline.',
+    'Answers questions from the library, in plain words. Answers in the language you ask in. Works offline.':
+      'Responde perguntas a partir da biblioteca, em linguagem simples. Responde no idioma em que você pergunta. Funciona offline.',
     'Watch it done — practical how-tos first, then channels and courses.':
       'Veja como se faz — instruções práticas primeiro, depois canais e cursos.',
     'Pages found so far — you can open them while the answer is written:':

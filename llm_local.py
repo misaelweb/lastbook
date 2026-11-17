@@ -380,6 +380,7 @@ class Local:
                 raise RuntimeError('The local AI stopped unexpectedly. Ask again to restart it.')
             sent_cancel = False
             import queue
+            clean = _ChannelFilter(on_text)
             while True:
                 if cancelled() and not sent_cancel:
                     sent_cancel = True
@@ -397,8 +398,9 @@ class Local:
                 if ev.get('id') != rid:
                     continue
                 if kind == 'tok':
-                    on_text(ev['t'])
+                    clean.feed(ev['t'])
                 elif kind == 'done':
+                    clean.flush()
                     self.last_used = time.time()
                     return ev
                 elif kind == 'error':
@@ -581,6 +583,56 @@ def _text(m):
 
 def _strip_thinking(text):
     return re.sub(r'<\|channel>.*?<channel\|>', '', text, flags=re.S).strip()
+
+
+class _ChannelFilter:
+    """Drops Gemma's thinking channel from a stream of pieces, even when a marker is split across pieces.
+
+    The prompt asks for an empty thought block, but the model sometimes opens its own ('<|channel>thought').
+    Showing that to the person is noise, and the markers themselves would be read aloud as text."""
+
+    OPEN = '<|channel>'
+    CLOSE = '<channel|>'
+
+    def __init__(self, emit):
+        self.emit, self.buf, self.inside = emit, '', False
+
+    def feed(self, piece):
+        buf = self.buf + piece
+        out = []
+        while buf:
+            if self.inside:
+                j = buf.find(self.CLOSE)
+                if j < 0:
+                    self.buf = buf           # still inside: keep nothing, wait for the close
+                    return
+                buf = buf[j + len(self.CLOSE):]
+                self.inside = False
+                continue
+            i = buf.find(self.OPEN)
+            if i < 0:
+                buf = buf.replace(self.CLOSE, '')     # a stray close marker is noise too
+                keep = 0
+                for k in range(min(len(self.OPEN), len(buf)), 0, -1):
+                    if buf.endswith(self.OPEN[:k]):
+                        keep = k
+                        break
+                out.append(buf[:len(buf) - keep])
+                buf = buf[len(buf) - keep:]
+                break
+            if i:
+                out.append(buf[:i])
+            buf = buf[i + len(self.OPEN):]
+            self.inside = True
+        self.buf = buf
+        text = ''.join(out)
+        if text:
+            self.emit(text)
+
+    def flush(self):
+        if not self.inside and self.buf:
+            self.emit(self.buf.replace(self.CLOSE, ''))
+        self.buf = ''
 
 
 def size_of(segments):
