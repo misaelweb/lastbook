@@ -149,6 +149,9 @@ def default_choice():
     <system drive>:\\Lastbook instead, made and closed to other accounts (install.private_folder). If even that cannot be made,
     the per-user folder stays and setup asks the person to choose."""
     parent = app_folders()[1]
+    home = os.environ.get('LASTBOOK_HOME')      # this fork: a launcher can name the disk libraries go on
+    if home:
+        return Path(home), None
     if sys.platform == 'win32':
         from engine.setup import api as setup_api, install
         if setup_api.path_too_deep(parent / DATA_NAME):

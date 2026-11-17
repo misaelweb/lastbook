@@ -22,6 +22,7 @@ from pathlib import Path
 
 from . import download, hardware, install
 from .manifest import Manifest
+from .. import regions
 
 DATA_NAME = install.DATA_NAME
 WORK_SUFFIX = '.setup'
@@ -310,6 +311,7 @@ class Setup:
         places = [self.default_parent]
         if self.current:
             places += [self.current / 'models', self.current]
+        places += regions.search_dirs()      # Downloads, Desktop, Documents and anything named by LASTBOOK_MAPS
         candidates = [Path(p) for p in self.sources.values()]
         for place in places:
             try:
@@ -412,6 +414,9 @@ class Setup:
 
     def state(self):
         self.manifest.fetch_once()
+        t = self.manifest.fetching
+        if t is not None and not self.manifest.current.get('packs'):
+            t.join(timeout=6)     # the window asks once when it opens: give a slow answer time to arrive
         hw = self.hardware()
         return {'mode': self.mode, 'hardware': hw, 'manifest': self.manifest.public(), 'current': self.current_info(),
                 'found': self.found(), 'recommend': self.recommend(hw), 'job': self.public_job()}
@@ -495,6 +500,11 @@ class Setup:
             for f in self.found():
                 if f.get('size_ok') and f['name'] not in srcs and f['kind'] in ('pack', 'model', 'map', 'addresses'):
                     srcs[f['name']] = f['path']
+            for f in (mp or {}).get('files') or []:     # a locally built region map: no URL, the zip is on the computer
+                if f['name'] not in srcs and not f.get('url'):
+                    p = regions.file_for(mp, extra=(str(parent),))
+                    if p:
+                        srcs[f['name']] = str(p)
             names = ([f['name'] for f in pack['files']] if pack else []) + ([model['file']] if model else []) + ([f['name'] for f in mp['files']] if mp else []) + ([f['name'] for f in addresses['files']] if addresses else [])
             have = set(srcs)
             need = install.need_bytes(pack, model, have) + _map_need(mp, have) + _map_need(addresses, have)
@@ -901,6 +911,8 @@ class Setup:
                                                         'It was left as it is. Download it instead?', file=src)
             print(f'setup: {src} does not match; downloading instead', flush=True)
         dest = work / 'downloads' / name
+        if not src and not f.get('url'):     # a locally built region map with its zip not on this computer
+            raise download.Failed('missing_file', f'{name} is not on this computer. Put it in Downloads (or beside the library), then try again.')
         if not dest.exists():       # room for what is still to come (the space check at start counted a file already here as had)
             try:
                 still = f['size'] - os.path.getsize(str(dest) + '.part')

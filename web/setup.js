@@ -104,12 +104,13 @@
     return r ? (window.LB && LB.lang() === 'pt-BR' ? r.pt : r.en) : null;
   };
   const mapName = id => id === 'us' ? (window.LB && LB.lang() === 'pt-BR' ? 'o mapa inteiro' : 'the whole US')
-    : (mapById(id) || {}).title || regionName(id) || id;
+    : regionName(id) || (mapById(id) || {}).title || id;
+  const T = s => (window.LB ? LB.t(s) : s);
   /* the detailed map the library will have once the chosen pack is in: the person's state map, or the one the pack carries */
   const PACK_MAP = { medium: 'CA', all: 'us' };   // what the packs carry today; a manifest packs[].map, when there, wins
   const packMap = id => { const p = packById(id) || {}; return 'map' in p ? p.map || null : PACK_MAP[id] || null };
   const mapNow = () => { const c = cur() || {}; return choice.pack && choice.pack !== c.pack ? packMap(choice.pack) : (c.map && c.map !== 'base' ? c.map : packMap(c.pack)) };
-  const selectedState = () => choice.map || (mapNow() !== 'us' && mapNow()) || ((cur() || {}).address_indexes || [])[0] || '';
+  const selectedState = () => choice.map || (mapNow() !== 'us' && mapNow()) || (maps()[0] || {}).id || '';   // regions: the build offers a short list
   const addresses = () => (S.manifest && S.manifest.address_indexes) || [];
   const addressById = id => addresses().find(a => a.id === id);
   const addressAdds = () => { const a = addressById(selectedState()); return a && a.available !== false && !((cur() || {}).address_indexes || []).includes(a.id) ? a : null };
@@ -178,6 +179,26 @@
     else if (cur() || S.mode === 'manage' || MANAGE_ASKED) view = cur() ? 'manage' : 'choose';
     $('#sBack').hidden = !cur();
     render(true);
+    // Running from source there is no bundled manifest: the sizes and the model arrive with the fetched one.
+    // Keep asking for a moment so a slow answer still fills the screen instead of leaving only the map.
+    if (S.manifest && S.manifest.source !== 'fetched' && !(S.manifest.packs || []).length) retryManifest(1);
+  }
+  async function retryManifest(n) {
+    if (n > 6) return;
+    await new Promise(r => setTimeout(r, 1500));
+    let next;
+    try { next = await call('state') } catch { return retryManifest(n + 1) }
+    const had = ((S.manifest && S.manifest.packs) || []).length;
+    const now = ((next.manifest && next.manifest.packs) || []).length;
+    S = next;
+    if (now !== had || (next.manifest && next.manifest.source === 'fetched')) {
+      if (!choice.pack) {
+        const small = packById('small');
+        choice.pack = small && small.available !== false ? 'small' : null;
+        choice.ai = !!((S.recommend || {}).ai) && aiFits();
+      }
+      render(false);
+    } else retryManifest(n + 1);
   }
 
   /* ------------------------------------------------------------ views */
@@ -195,19 +216,20 @@
   /* ---- this computer */
   function computer() {
     const h = S.hardware || {}, d = diskFor(folder), tiles = [];
-    if (d) tiles.push([ico('disk'), size(d.free_bytes), `free on ${esc(diskName(d))}`]);
+    if (d) tiles.push([ico('disk'), size(d.free_bytes), `${T('free on')} ${esc(diskName(d))}`]);
     if (h.ram_bytes) tiles.push([ico('chip'), ram(h.ram_bytes), h.unified_memory ? 'memory, shared with graphics' : 'memory']);
     if (!h.unified_memory) {
       const g = (h.gpus || []).slice().sort((a, b) => (b.vram_bytes || 0) - (a.vram_bytes || 0))[0];
-      tiles.push(g ? [ico('gpu'), g.vram_bytes ? ram(g.vram_bytes) : '—', `graphics: ${esc(g.name)}`] : [ico('gpu'), 'None', 'graphics card for the AI']);
+      tiles.push(g ? [ico('gpu'), g.vram_bytes ? ram(g.vram_bytes) : '—', `${T('graphics:')} ${esc(g.name)}`] : [ico('gpu'), 'None', 'graphics card for the AI']);
     }
     return `<section class="s-pc" aria-label="This computer">${tiles.map(t => `<div class="s-tile">${t[0]}<b>${t[1]}</b><small>${t[2]}</small></div>`).join('')}</section>`;
   }
   function recommendLine() {
     const r = S.recommend || {}, p = packById(r.pack);
     if (!p) return r.why ? `<p class="s-rec bad">${ico('warn')}<span>${esc(r.why)}</span></p>` : '';
-    const what = `${esc(p.title)}${r.ai && aiFits() ? ' with the local AI' : ''}`;
-    return `<p class="s-rec">${ico('ok')}<span><b>Suggested: ${what}.</b> ${esc(r.why || '')}</span></p>`;
+    const T = s => (window.LB ? LB.t(s) : s);
+    const what = `${esc(T(p.title))}${r.ai && aiFits() ? T(' with the local AI') : ''}`;
+    return `<p class="s-rec">${ico('ok')}<span><b>${T('Suggested:')} ${what}.</b> ${esc(T(r.why || ''))}</span></p>`;
   }
 
   /* ---- choose */
@@ -217,11 +239,13 @@
       const update = c && c.pack === p.id && packNeedsInstall(p);
       const off = p.available === false, here = c && c.pack === p.id && !update, rec = (S.recommend || {}).pack === p.id && !c;
       const badge = off ? '<span class="s-badge later">Coming later</span>' : update ? '<span class="s-badge rec">Update available</span>' : here ? '<span class="s-badge here">Installed</span>' : rec ? '<span class="s-badge rec">Suggested</span>' : '';
-      return `<label class="s-opt${off ? ' off' : ''}">
+      const sizes = here ? T('On this computer') : off ? T('Not ready to download yet')
+      : `<span>${foundFor('pack', p.id) ? T('Already downloaded') : size(packDl(p)) + ' ' + T('download')}</span><span>${size(p.installed_bytes)} ${T('on disk')}</span>`;
+    return `<label class="s-opt${off ? ' off' : ''}">
         <input type="radio" name="pack" value="${esc(p.id)}"${choice.pack === p.id ? ' checked' : ''}${off ? ' disabled' : ''}>
         <span class="s-opt-in"><span class="s-opt-h"><b>${esc(p.title)}</b>${badge}</span>
         <small data-pack-summary="${esc(p.id)}">${esc(packSummary(p))}</small>
-        <span class="s-sizes">${off ? 'Not ready to download yet' : here ? 'On this computer' : `<span>${foundFor('pack', p.id) ? 'Already downloaded' : size(packDl(p)) + ' download'}</span><span>${size(p.installed_bytes)} on disk</span>`}</span></span></label>`;
+        <span class="s-sizes">${sizes}</span></span></label>`;
     }).join('');
     let ai = '';
     if (m && m.available !== false) {
@@ -230,7 +254,7 @@
         ? `<label class="s-opt s-ai"><input type="checkbox" id="aiBox"${choice.ai || has ? ' checked' : ''}${has ? ' disabled' : ''}>
             <span class="s-opt-in"><span class="s-opt-h"><b>Local AI</b>${has ? '<span class="s-badge here">Installed</span>' : (S.recommend || {}).ai && !c ? '<span class="s-badge rec">Suggested</span>' : '<span class="s-badge">Optional</span>'}</span>
             <small>Answers questions from the library, in plain words. Works offline.</small>
-            <span class="s-sizes">${has ? 'On this computer' : foundFor('model') ? '<span>Already downloaded</span>' : `<span>About ${size(m.size)} download</span>`}</span></span></label>`
+            <span class="s-sizes">${has ? 'On this computer' : foundFor('model') ? '<span>Already downloaded</span>' : `<span>${T('About')} ${size(m.size)} ${T('download')}</span>`}</span></span></label>`
         : `<div class="s-opt s-ai off" role="group" aria-label="Local AI"><span class="s-opt-in"><span class="s-opt-h"><b>Local AI</b><span class="s-badge later">Not for this computer</span></span>
             <small>${esc((S.hardware.ai && S.hardware.ai.why) || 'This computer does not have enough memory for it.')}</small></span></div>`;
     }
@@ -243,11 +267,11 @@
       ${c ? '' : '<p class="lead">Choose your state and library. Lastbook downloads them for offline use.</p>'}
       ${computer()}
       ${c ? '' : recommendLine()}
-      ${found ? `<h2>Found on this computer</h2><div class="s-founds">${found}</div>` : ''}
-      <section id="mapBox" class="s-map-panel" aria-label="Your local map"></section>
       <h2 id="packH">Library</h2>
       <div class="s-opts" role="radiogroup" aria-labelledby="packH">${packCards}</div>
       ${ai ? `<h2>Local AI</h2>${ai}` : ''}
+      ${found ? `<h2>Found on this computer</h2><div class="s-founds">${found}</div>` : ''}
+      <section id="mapBox" class="s-map-panel" aria-label="Your local map"></section>
       <section class="s-sum" id="sum" aria-live="polite"></section>
       <div class="s-go">
         <button class="btn big" id="start"></button>
@@ -276,16 +300,20 @@
       const addressIncluded = ((cur() || {}).address_indexes || []).includes(m.id);
       const off = !included && m.available === false;
       const bytes = (included ? 0 : packDl(m)) + (a && a.available !== false && !addressIncluded ? packDl(a) : 0);
-      const details = off ? 'coming later' : bytes ? size(bytes) + ' download' : 'included';
-      return `<option value="${esc(m.id)}"${selected === m.id ? ' selected' : ''}${off ? ' disabled' : ''}>${esc(m.title)} — ${details}</option>`;
+      const details = off ? T('coming later') : bytes ? size(bytes) + ' ' + T('download') : T('included');
+      return `<option value="${esc(m.id)}"${selected === m.id ? ' selected' : ''}${off ? ' disabled' : ''}>${esc(mapName(m.id))} — ${details}</option>`;
     }).join('');
     const sel = mapById(selected), a = addressAdds();
+    if (S.mode === 'first-run' && selected && !choice.map && sel) choice.map = selected;   // one map offered: it is the person's choice unless they change it
     const mapIncluded = now === 'us' || selected === now;
     const bytes = (sel && !mapIncluded ? packDl(sel) : 0) + (a ? packDl(a) : 0);
     const disk = (sel && !mapIncluded ? sel.installed_bytes || 0 : 0) + (a ? a.installed_bytes || 0 : 0);
     const unavailable = selected && addresses().length && (!addressById(selected) || addressById(selected).available === false);
-    let hint = !sel ? 'Select your state to continue.' : bytes ? `${size(bytes)} download · ${size(disk)} on disk${mapIncluded && a ? '. Your map is already included; only the address index downloads.' : ''}` : 'Your state map and available address index are already included.';
-    if (unavailable) hint = (bytes ? `${size(bytes)} download · ${size(disk)} on disk.` : 'Your state map is already included.') + ' Street-address search is not available for this state yet.';
+    const dl = `${size(bytes)} ${T('download')} · ${size(disk)} ${T('on disk')}`;
+    let hint = !sel ? T('Select your state to continue.')
+      : bytes ? dl + (mapIncluded && a ? T('. Your map is already included; only the address index downloads.') : '')
+      : T('Your state map and available address index are already included.');
+    if (unavailable) hint = (bytes ? `${dl}.` : T('Your state map is already included.')) + ' ' + T('Street-address search is not available for this state yet.');
     box.innerHTML = `<h2>${ico('map')}Your local map</h2>
       <p class="s-mapnote">Local streets, buildings, water and places to get help. Available offline.</p>
       ${now === 'us' ? '<p class="s-mapnote">All includes every state map. Choose your state for offline street-address search.</p>' : ''}

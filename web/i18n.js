@@ -591,6 +591,38 @@
       'Endereço não encontrado nos dados offline. Confira o número e a rua.',
     'Find an address, town or ZIP': 'Encontrar cidade, bairro ou lugar',
     'Find an address, town, ZIP code or place': 'Encontrar endereço, cidade, CEP ou lugar',
+    'Local streets, water, land, towns and help points': 'Ruas, água, uso do solo, cidades e pontos de ajuda',
+    'Small': 'Pequeno',
+    'Medium': 'Médio',
+    'All': 'Tudo',
+    'Suggested:': 'Sugerido:',
+    ' with the local AI': ' com a IA local',
+    'Suggested': 'Sugerido',
+    'Installed': 'Instalado',
+    'Optional': 'Opcional',
+    'Coming later': 'Em breve',
+    'Update available': 'Atualização disponível',
+    'on disk': 'em disco',
+    'download': 'download',
+    'included': 'incluído',
+    'coming later': 'em breve',
+    'free on': 'livre em',
+    'graphics:': 'placa de vídeo:',
+    'About': 'Cerca de',
+    '. Your map is already included; only the address index downloads.':
+      '. O seu mapa já está incluído; só o índice de endereços será baixado.',
+    'Your state map and available address index are already included.':
+      'O mapa do seu estado e o índice de endereços disponível já estão incluídos.',
+    'Small is selected to get started. You can choose a larger library.':
+      'O Pequeno está selecionado para começar. Você pode escolher uma biblioteca maior.',
+    'Essential first aid, water, food, shelter and repair knowledge.':
+      'Primeiros socorros, água, comida, abrigo e conhecimentos de reparo essenciais.',
+    'Small, plus the core how-to videos, all documents, Wikibooks and a detailed map of California.':
+      'O Pequeno, mais os vídeos práticos principais, todos os documentos, Wikibooks e um mapa detalhado da Califórnia.',
+    'Small, plus the core how-to videos, all documents, Wikibooks and a detailed map of Brasil — São Paulo.':
+      'O Pequeno, mais os vídeos práticos principais, todos os documentos, Wikibooks e um mapa detalhado de Brasil — São Paulo.',
+    'Everything in the library: every video, document and encyclopedia, Wikipedia included, with detailed maps for the whole US.':
+      'Tudo da biblioteca: todos os vídeos, documentos e enciclopédias, incluindo a Wikipédia, com mapas detalhados da sua região.',
     'Nothing from your layers in this view - zoom out or turn on more layers.':
       'Nada das suas camadas nesta vista — afaste o mapa ou ative mais camadas.',
     'Searching…': 'Buscando…',

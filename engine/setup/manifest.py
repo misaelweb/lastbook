@@ -8,6 +8,7 @@ import threading
 from pathlib import Path
 
 from . import download
+from .. import regions
 
 REMOTE = 'https://downloads.lastbook.org/manifest-v1.json'
 SHA = re.compile(r'^[0-9a-f]{64}$')
@@ -92,7 +93,9 @@ def validate(m, allowed=None):
             return None
         models.append({'id': x['id'], 'title': str(x.get('title') or x['id']), 'file': x['file'], 'url': x['url'], 'size': x['size'],
                        'sha256': x['sha256'], 'memory_bytes': x['memory_bytes'], 'available': bool(x.get('available', True))})
-    return {'version': 1, 'published': str(m.get('published') or ''), 'packs': packs, 'models': models, **collections}
+    return {'version': 1, 'published': str(m.get('published') or ''), 'packs': packs, 'models': models,
+            'maps': regions.manifest_entries(),   # this build offers regions it can install locally, not the US list
+            'address_indexes': collections['address_indexes']}
 
 
 def load_bundled(paths=None):
@@ -103,7 +106,7 @@ def load_bundled(paths=None):
             continue
         if m:
             return m
-    return {'version': 1, 'published': '', 'packs': [], 'models': [], 'maps': []}
+    return {'version': 1, 'published': '', 'packs': [], 'models': [], 'maps': regions.manifest_entries()}
 
 
 def merge(bundled, fetched):
