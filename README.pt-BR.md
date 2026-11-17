@@ -102,6 +102,17 @@ python3 -m venv .venv
 
 O aplicativo original continua igual: `python3 app/main.py --data ...` (veja o README do projeto).
 
+## IA local rodando pelo código-fonte
+
+O executável `lastbook-llm.exe` e as DLLs (Vulkan e CPU) vêm no aplicativo empacotado. Ao rodar
+`app/main.py` direto do código, o motor procura o runtime em `derived/llm/bin-win/`; o atalho
+[D:\Abrir-Lastbook.cmd](D:/Abrir-Lastbook.cmd) copia essa pasta do app instalado na primeira vez.
+
+O modelo (cerca de 15,8 GB) fica em `LastbookData/models/gemma-4-26B-A4B-it-UD-Q4_K_M.gguf`. A
+primeira pergunta carrega o modelo (1–3 minutos, conforme o disco e a GPU); depois ele fica pronto
+por 15 minutos sem perguntas. Sem o runtime ou sem o modelo, a Conversa continua funcionando e
+devolve as páginas correspondentes da biblioteca.
+
 ## Testes
 
 ```bash
