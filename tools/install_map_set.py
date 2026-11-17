@@ -20,7 +20,26 @@ import pathlib
 import shutil
 import sqlite3
 import sys
+import tempfile
 import time
+import zipfile
+
+
+def unpack_zip(path):
+    """A downloaded map set is a zip; unpack it to a temporary folder, refusing paths that escape it."""
+    out = tempfile.mkdtemp(prefix='lastbook-map-')
+    with zipfile.ZipFile(path) as z:
+        for info in z.infolist():
+            name = pathlib.PurePosixPath(info.filename)
+            if name.is_absolute() or '..' in name.parts:
+                raise SystemExit(f'the zip holds an unsafe path: {info.filename}')
+            if info.is_dir():
+                continue
+            dest = pathlib.Path(out, *name.parts)
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            with z.open(info) as src, open(dest, 'wb') as dst:
+                shutil.copyfileobj(src, dst, 1 << 20)
+    return pathlib.Path(out)
 
 
 def files_in(lib):
@@ -83,6 +102,11 @@ def main():
     if not (lib / 'library-data').is_dir() and not (lib / 'derived').is_dir():
         raise SystemExit(f'{lib} does not look like a Lastbook data folder (no library-data/ or derived/)')
     set_dir = pathlib.Path(args.set).expanduser().resolve()
+    temporary = None
+    if set_dir.is_file() and set_dir.suffix.lower() == '.zip':
+        print(f'unpacking {set_dir.name}…', flush=True)
+        set_dir = unpack_zip(set_dir)
+        temporary = set_dir
     check(set_dir)
     old = files_in(lib)
 
@@ -91,6 +115,8 @@ def main():
     if args.dry_run:
         print(f'would move {len(old)} old map files to {aside}')
         print(f'would copy {sum(1 for _ in set_dir.rglob("*") if _.is_file())} files from {set_dir}')
+        if temporary:
+            shutil.rmtree(temporary, ignore_errors=True)
         return 0
 
     moved = 0
@@ -115,6 +141,8 @@ def main():
         shutil.copy2(src, dest)
         copied += 1
     print(f'installed {copied} files into {lib}')
+    if temporary:
+        shutil.rmtree(temporary, ignore_errors=True)
     print('Open Lastbook and check the map; Map -> "All" fits the new area.')
     return 0
 

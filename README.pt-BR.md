@@ -63,6 +63,8 @@ Feche o Lastbook antes (no Windows, arquivo aberto não é substituído).
 
 ```bash
 python3 tools/install_map_set.py --data "C:/Users/voce/LastbookData" --set derived/packs/maps/BR-SP
+# ou, direto do zip baixado das releases:
+python3 tools/install_map_set.py --data "C:/Users/voce/LastbookData" --set Lastbook-Map-BR-SP.zip
 ```
 
 O instalador guarda o conjunto anterior em `derived/geo/map-set-previous-<data>/` e copia o novo.
