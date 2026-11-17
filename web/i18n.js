@@ -592,6 +592,9 @@
     'Find an address, town or ZIP': 'Encontrar cidade, bairro ou lugar',
     'Find an address, town, ZIP code or place': 'Encontrar endereço, cidade, CEP ou lugar',
     'Local streets, water, land, towns and help points': 'Ruas, água, uso do solo, cidades e pontos de ajuda',
+    'Picked for the guides': 'Escolhidos para os guias',
+    'Chosen to go with the survival guides': 'Selecionados para acompanhar os guias',
+    'Videos picked for the guides': 'Vídeos escolhidos para os guias',
     'Small': 'Pequeno',
     'Medium': 'Médio',
     'All': 'Tudo',
@@ -775,7 +778,8 @@
     if (!hit) return;
     const lead = raw.match(/^\s*/)[0];
     const tail = raw.match(/\s*$/)[0];
-    n.nodeValue = lead + hit + tail;
+    const next = lead + hit + tail;
+    if (next !== raw) n.nodeValue = next;   // writing the same text again would fire this observer for ever
   }
 
   function skip(el) {
@@ -789,7 +793,10 @@
     const raw = el.textContent || '';
     const m = /^(.*?)(\s*·\s*Lastbook)?$/.exec(raw);
     const hit = DICT[normalize(m[1])];
-    if (hit) el.textContent = hit + (m[2] || '');
+    if (hit) {
+      const next = hit + (m[2] || '');
+      if (next !== raw) el.textContent = next;
+    }
   }
 
   function apply(root) {
