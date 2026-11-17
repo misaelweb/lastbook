@@ -747,14 +747,25 @@
   }
 
   function skip(el) {
-    return !el || el.closest('script,style,code,pre,textarea,[data-i18n-skip],.pagetext,.wikitext,.pageimg,.frame');
+    if (!el || el.nodeType !== 1) return true;
+    return !!el.closest('script,style,code,pre,textarea,[data-i18n-skip],.pagetext,.wikitext,.pageimg,.frame');
+  }
+
+  function translateTitle() {
+    const el = document.querySelector('title');
+    if (!el) return;
+    const raw = el.textContent || '';
+    const m = /^(.*?)(\s*·\s*Lastbook)?$/.exec(raw);
+    const hit = DICT[normalize(m[1])];
+    if (hit) el.textContent = hit + (m[2] || '');
   }
 
   function apply(root) {
     if (lang === 'en' || !root) return;
-    const base = root.nodeType === 1 ? root : document.body;
-    if (!base || skip(base)) return;
-    if (base.nodeType === 3) { translateTextNode(base); return; }
+    if (root.nodeType === 3) { translateTextNode(root); return; }
+    if (root.nodeType !== 1) return;
+    const base = root;
+    if (skip(base)) return;
     const walker = document.createTreeWalker(base, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT, {
       acceptNode(node) {
         if (node.nodeType === 1) {
@@ -781,9 +792,7 @@
     }
     if (base === document.body) {
       document.documentElement.lang = lang;
-      const title = document.title;
-      const hit = DICT[normalize(title)];
-      if (hit) document.title = hit;
+      translateTitle();
     }
   }
 
@@ -813,10 +822,12 @@
     new MutationObserver(muts => {
       for (const m of muts) {
         if (m.type === 'characterData') { queued.add(m.target); continue }
-        for (const n of m.addedNodes) if (n.nodeType === 1) queued.add(n);
+        for (const n of m.addedNodes) if (n.nodeType === 1 || n.nodeType === 3) queued.add(n);
       }
       if (queued.size && !scheduled) { scheduled = true; Promise.resolve().then(flush) }
     }).observe(document.body, { childList: true, subtree: true, characterData: true });
+    const title = document.querySelector('title');
+    if (title) new MutationObserver(() => translateTitle()).observe(title, { childList: true, characterData: true, subtree: true });
   }
 
   function boot() {
