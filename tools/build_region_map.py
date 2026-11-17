@@ -170,6 +170,8 @@ def main():
     ap.add_argument('--gpkg', required=True, help='a Geofabrik .gpkg file or its .zip')
     ap.add_argument('--out', required=True, help='folder for the map set, such as derived/packs/maps/BR-SP')
     ap.add_argument('--box', help='override the region box: west,south,east,north')
+    ap.add_argument('--skip-buildings', action='store_true',
+                    help='leave out OSM building footprints: a much smaller and faster map set')
     args = ap.parse_args()
 
     import regions
@@ -276,9 +278,10 @@ def main():
         add('road', cls, name or ref, ROAD_Z.get(cls, 15), parts)
     print('roads', fid[0], round(time.time() - t0), flush=True)
     dst.commit()
-    for parts, (cls, name) in each('gis_osm_buildings_a_free'):
-        add('bldg', cls or '', None, 15, [simplify(parts[0], 0.000002)])
-    print('buildings', fid[0], round(time.time() - t0), flush=True)
+    if not args.skip_buildings:
+        for parts, (cls, name) in each('gis_osm_buildings_a_free'):
+            add('bldg', cls or '', None, 15, [simplify(parts[0], 0.000002)])
+        print('buildings', fid[0], round(time.time() - t0), flush=True)
     dst.commit()
 
     places = []

@@ -80,6 +80,8 @@ const MapView = (() => {
   // Interface language (pt-BR): map labels and units go through LB when it is loaded.
   const T = s => (window.LB ? LB.t(s) : s);
   const metric = () => !!(window.LB && LB.metric());
+  // "1 place" / "12 places", or "1 lugar" / "12 lugares" in Portuguese.
+  const nPlaces = n => metric() ? `${n} ${n === 1 ? 'lugar' : 'lugares'}` : `${n} place${n === 1 ? '' : 's'}`;
   const $ = id => document.getElementById(id);
   const dist = km => metric() ? (km < 1 ? Math.round(km * 1000) + ' m' : (km < 10 ? km.toFixed(1).replace('.', ',') : Math.round(km)) + ' km')
     : km < 1.6 ? Math.round(km * 1000) + ' m' : (km / 1.609).toFixed(km < 16 ? 1 : 0) + ' mi';
@@ -318,7 +320,7 @@ const MapView = (() => {
     if (hit === st.hover) { if (hit) placeTip(x, y); return }
     st.hover = hit; const tip = $('tip'); if (!tip) return;
     if (!hit) return hideTip();
-    tip.innerHTML = hit.count > 1 && !hit.spot ? `<b>${hit.count.toLocaleString()} places</b>${breakdown(hit)}<small>${st.z >= 16 ? 'Click to list them' : 'Click to zoom in'}</small>`
+    tip.innerHTML = hit.count > 1 && !hit.spot ? `<b>${nPlaces(hit.count.toLocaleString())}</b>${breakdown(hit)}<small>${st.z >= 16 ? 'Click to list them' : 'Click to zoom in'}</small>`
       : hit.count > 1 ? `<b>${hit.count} records at one spot</b><small>${escH(layerOf(hit.cls).label)} · click to list them</small>`
       : `<b>${escH(hit.place ? hit.name : unnamed(hit))}</b><small>${escH(hit.place ? hit.kind || 'Place' : layerOf(hit.cls).label)}${hit.records > 1 ? ` · ${hit.records} records · click to list` : ''}</small>`;
     tip.hidden = false; placeTip(x, y);
@@ -799,7 +801,7 @@ const MapView = (() => {
   async function showMembers(p) {
     const serial = ++st.serial.members, state = st, b = p.bbox || [p.lon, p.lat, p.lon, p.lat], pad = 1e-5;
     st.sel = { lat: p.lat, lon: p.lon }; draw();
-    const title = p.spot ? `${Math.max(p.count, p.records || 0)} records at one spot` : `${p.count.toLocaleString()} places here`;
+    const title = p.spot ? `${Math.max(p.count, p.records || 0)} records at one spot` : metric() ? `${nPlaces(p.count.toLocaleString())} aqui` : `${p.count.toLocaleString()} places here`;
     openCard(`<div class="kind">${sym(layerOf(p.cls), 20)}${p.spot ? escH(layerOf(p.cls).label) : 'Group'}</div><h3>${escH(title)}</h3><p class="muted">Loading…</p>`);
     reveal(p.lat, p.lon);
     try {
@@ -846,7 +848,8 @@ const MapView = (() => {
   function countLine() {
     let n = 0; for (const p of st.pins) if (inView(p)) n += p.count;
     renderLayers();
-    statusLine(n ? `${n.toLocaleString()} place${n === 1 ? '' : 's'} in view${st.truncated ? ' (busiest shown — zoom in for all)' : ''}` : 'Nothing from your layers in this view — zoom out or turn on more layers.');
+    statusLine(n ? (metric() ? `${nPlaces(n.toLocaleString())} nesta vista${st.truncated ? ' (os mais movimentados — aproxime para ver todos)' : ''}`
+      : `${n.toLocaleString()} place${n === 1 ? '' : 's'} in view${st.truncated ? ' (busiest shown - zoom in for all)' : ''}`) : T('Nothing from your layers in this view - zoom out or turn on more layers.'));
   }
   async function nearby() {
     if (!st) return;
@@ -877,7 +880,7 @@ const MapView = (() => {
       if (st !== state || serial !== st.serial.place) return;
       if (!r.length) { const address = /^\s*\d[\w-]*\s+\S/.test(q); box.innerHTML = '<p class="muted small" style="padding:8px">' + (address ? 'Address not found in your offline data. Check the house number and street.' + (IN_WINDOW ? ' <a href="/ui/setup.html#manage">Add your state’s address search</a>.' : '') : 'No place by that name in the saved gazetteers. Try a town, county or 5-digit ZIP.') + '</p>'; return }
       const pick = p => { box.hidden = true; st.mark = { lat: p.lat, lon: p.lon, name: p.name, kind: p.kind, detail: p.detail }; closeCard(); go(p.lat, p.lon, /county/i.test(p.kind) ? 10 : /ZIP|city|town|populated|^(Lake|Reservoir)$/i.test(p.kind) ? 13 : 15); st.cv.focus() };
-      box.innerHTML = `<div class="small muted" style="padding:4px 8px">${r.length} match${r.length === 1 ? '' : 'es'}</div>` + r.map((p, i) => `<button data-i="${i}"><b>${escH(p.name)}</b><small>${escH(p.kind)} · ${escH(p.detail)}</small></button>`).join('');
+      box.innerHTML = `<div class="small muted" style="padding:4px 8px">${r.length} ${T(r.length === 1 ? 'match' : 'matches')}</div>` + r.map((p, i) => `<button data-i="${i}"><b>${escH(p.name)}</b><small>${escH(p.kind)} · ${escH(p.detail)}</small></button>`).join('');
       box.querySelectorAll('button').forEach(b => b.onclick = () => pick(r[+b.dataset.i]));
       if (r.length === 1) pick(r[0]);
     } catch { if (st === state) box.innerHTML = '<p class="muted small">Place finder unavailable.</p>' }

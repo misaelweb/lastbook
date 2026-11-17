@@ -295,7 +295,7 @@ async function route() {
     else notFound();
   } catch (e) { setTitle(''); document.body.className = 'v-error'; main.innerHTML = emptyState('warn', 'This page could not be opened', e.message || e) }   // v-error: not a reading page, so a phone keeps its tab bar
   wireRails(); dock(); barState();
-  if (window.LB) LB.apply(document.body);
+  if (window.LB) { LB.apply(main); LB.apply(document.querySelector('header.top')) }
   $('#topQ').value = '';
   const big = $('main h1'); if (big) h1seen.observe(big);
   if (v === 'ask') { bandState(); return }  // the chat manages its own scroll position

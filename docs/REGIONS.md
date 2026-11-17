@@ -27,6 +27,7 @@ Janeiro, Minas Gerais and Espírito Santo come from the same Sudeste extract.
 ```bash
 python3 tools/build_region_map.py --region BR-SP \
   --gpkg sudeste-latest-free.gpkg.zip --out derived/packs/maps/BR-SP
+# --skip-buildings leaves out the OSM building outlines: a much smaller, faster set
 python3 tools/install_map_set.py --data /path/to/LastbookData --set derived/packs/maps/BR-SP
 ```
 

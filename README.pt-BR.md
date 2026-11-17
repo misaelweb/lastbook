@@ -46,10 +46,13 @@ Saída em `derived/packs/maps/BR-SP/`:
 
 | Arquivo | O que tem |
 |---|---|
-| `derived/geo/national.sqlite` | ruas, água, uso do solo, ferrovias, cidades e pontos de ajuda |
+| `derived/geo/national.sqlite` | ruas, água, uso do solo, ferrovias, cidades, pontos de ajuda e (opcional) prédios |
 | `derived/geo/places.sqlite` | busca de cidades e lugares ("Encontrar um lugar") |
 | `derived/geo/map.sqlite` | schema vazio (o motor sempre abre esse arquivo) |
 | `map-set.json` | nome do conjunto e tamanho de cada arquivo |
+
+Para um conjunto bem menor e mais rápido de construir, use `--skip-buildings`: os contornos de
+prédios (visíveis só no zoom de rua) ficam de fora.
 
 Não há relevo, prédios nem camadas de recursos minerais: essas bases só existem para os EUA e o
 aplicativo simplesmente não mostra o que o conjunto não tem.
