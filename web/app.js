@@ -75,7 +75,7 @@ document.addEventListener('click', e => { const b = e.target.closest('[data-save
 let toastT;
 function toast(msg) {
   let t = $('.toast'); if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.append(t) }
-  t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200);
+  t.textContent = window.LB ? LB.t(msg) : msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => t.hidden = true, 2200);
 }
 // Video watch progress: {id: {t, d, title, thumb, at}}
 const vprog = () => store.get('vprog', {});
@@ -218,7 +218,7 @@ function errorBox(e, what) {
 }
 // The window title, and on reading pages the toolbar's title and the line under it.
 // bar: what the toolbar shows when it is not the page's own title (an article names itself; the toolbar names the encyclopedia).
-const setTitle = (t, sub, bar) => { document.title = t ? t + ' · Lastbook' : 'Lastbook'; const b = $('#tbTitle'); b.textContent = b.title = bar ?? t ?? ''; if (sub !== undefined) $('#tbSub').textContent = $('#tbSub').title = sub };
+const setTitle = (t, sub, bar) => { const T = window.LB ? LB.t : (x => x); document.title = t ? T(t) + ' · Lastbook' : 'Lastbook'; const b = $('#tbTitle'); b.textContent = b.title = T(bar ?? t ?? ''); if (sub !== undefined) $('#tbSub').textContent = $('#tbSub').title = T(sub) };
 
 /* ------------------------------------------------------------- router -- */
 // Where this tab is in its history. Each entry carries its own index in history.state, so Back and Forward are known exactly:
@@ -295,6 +295,7 @@ async function route() {
     else notFound();
   } catch (e) { setTitle(''); document.body.className = 'v-error'; main.innerHTML = emptyState('warn', 'This page could not be opened', e.message || e) }   // v-error: not a reading page, so a phone keeps its tab bar
   wireRails(); dock(); barState();
+  if (window.LB) LB.apply(document.body);
   $('#topQ').value = '';
   const big = $('main h1'); if (big) h1seen.observe(big);
   if (v === 'ask') { bandState(); return }  // the chat manages its own scroll position

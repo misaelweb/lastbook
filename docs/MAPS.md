@@ -77,6 +77,7 @@ so ask before adding many.
 | `places.sqlite` | `tools/build_places.py` | USGS GNIS, Census gazetteers, named OpenStreetMap places |
 | address indexes | `tools/build_addresses.py`, then `packaging/address_indexes.py` | Overture Maps addresses |
 | a state map | `packaging/build_packs.py map <ST>`, published by `packaging/state_maps.py` | The base map, then every row inside the state's box |
+| a region map outside the US (for example São Paulo) | `tools/build_region_map.py`, installed by `tools/install_map_set.py` | A Geofabrik GeoPackage of OpenStreetMap data, cut to the region box in `packaging/regions.py` ([REGIONS.md](REGIONS.md)) |
 
 Each tool's header says what it reads, what it writes and the licence of its source. Read it before you run one: some
 expect source files that are hundreds of gigabytes.

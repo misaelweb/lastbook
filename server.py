@@ -1517,11 +1517,16 @@ def _distinct(path, sql):
 def map_contents():
     """What a pack's map really holds, decided from its own files: which pin kinds, and the box they fall in. The rest of the map is the plain base."""
     kinds, boxes = set(), []
+    region_box = None
     for path in (MAPDB, HERE / 'derived/geo/national.sqlite'):
         kinds |= set(_distinct(path, 'SELECT DISTINCT cls FROM poi'))
         if Path(path).exists():
             db = sqlite3.connect(ro_uri(path), uri=True)
             try:
+                if Path(path).name == 'national.sqlite':
+                    meta = dict(db.execute('SELECT key,value FROM meta').fetchall())
+                    if meta.get('region') and meta.get('bounds'):   # a region map set says its own box
+                        region_box = [float(v) for v in str(meta['bounds']).split(',')]
                 box = db.execute('SELECT MIN(lon),MIN(lat),MAX(lon),MAX(lat) FROM poi').fetchone()
                 if box and box[0] is not None:
                     boxes.append(box)
@@ -1532,11 +1537,11 @@ def map_contents():
     for path in (LIB / 'geography/resources/atlas.sqlite', WATERDB, CROPDB):
         kinds |= set(_distinct(path, 'SELECT DISTINCT kind FROM resource'))
     contours = any(r for r in _distinct(TERRAINDB, 'SELECT 1 FROM tile WHERE z>=11 LIMIT 1'))
-    bounds = None
-    if boxes:
+    bounds = region_box
+    if bounds is None and boxes:
         bounds = [min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes)]
-        if bounds[2] - bounds[0] > 90:  # a map of everything: crossing the date line would show the whole world
-            bounds = None
+    if bounds and bounds[2] - bounds[0] > 90:  # a map of everything: crossing the date line would show the whole world
+        bounds = None
     return {'layers': sorted(kinds), 'bounds': bounds, 'detail': bool(boxes), 'contours': contours}
 
 
@@ -1624,14 +1629,14 @@ def map_info():
 
 def pack_datasets(have):
     """The panel beside a pack's map says only what this pack's map files hold."""
-    area = 'the area this map details' if have['bounds'] else 'the whole US'
-    out = [{'label': 'Main roads, towns and water for the whole US (OpenStreetMap, USGS)', 'status': 'Shown at every zoom level'}]
+    area = 'the area this map details' if have['bounds'] else 'the whole map'
+    out = [{'label': 'Main roads, towns and water (OpenStreetMap, USGS)', 'status': 'Shown at every zoom level'}]
     if have['detail']:
         out.append({'label': f'Streets, places and help points (OpenStreetMap) for {area}', 'status': 'Street detail stops at the edge of this area.' if have['bounds'] else 'Shown when you zoom in'})
     else:
         out.append({'label': 'No street detail or help points', 'status': 'This download has only the base map. Hospitals, water taps and side streets are not in it.'})
     if PLACEDB.exists():
-        out.append({'label': 'Place names (USGS GNIS, Census 2025 ZIP codes and counties)', 'status': 'Used by "Find a town, ZIP or place"'})
+        out.append({'label': 'Place names (OpenStreetMap; USGS GNIS, Census 2025 ZIP codes and counties in the US)', 'status': 'Used by "Find a town, ZIP or place"'})
     if TERRAINDB.exists():
         out.append({'label': 'Elevation (USGS 3DEP)', 'status': 'Shaded relief. Contour lines only where this map has fine detail.' if have['detail'] else 'Shaded relief at broad zoom levels'})
     if BLDGDB.exists():

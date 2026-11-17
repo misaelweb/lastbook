@@ -77,8 +77,12 @@ const MapView = (() => {
   const x2lon = (x, z) => x / 2 ** z * 360 - 180;
   const y2lat = (y, z) => { const n = Math.PI - 2 * Math.PI * y / 2 ** z; return 180 / Math.PI * Math.atan(Math.sinh(n)) };
   const escH = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // Interface language (pt-BR): map labels and units go through LB when it is loaded.
+  const T = s => (window.LB ? LB.t(s) : s);
+  const metric = () => !!(window.LB && LB.metric());
   const $ = id => document.getElementById(id);
-  const dist = km => km < 1.6 ? Math.round(km * 1000) + ' m' : (km / 1.609).toFixed(km < 16 ? 1 : 0) + ' mi';
+  const dist = km => metric() ? (km < 1 ? Math.round(km * 1000) + ' m' : (km < 10 ? km.toFixed(1).replace('.', ',') : Math.round(km)) + ' km')
+    : km < 1.6 ? Math.round(km * 1000) + ' m' : (km / 1.609).toFixed(km < 16 ? 1 : 0) + ' mi';
   const kmBetween = (a, b, c, d) => { const r = Math.PI / 180, x = Math.sin((c - a) * r / 2) ** 2 + Math.cos(a * r) * Math.cos(c * r) * Math.sin((d - b) * r / 2) ** 2; return 12742 * Math.asin(Math.sqrt(x)) };
   const sym = (l, size = 22) => `<i class="msym" style="background:${l.col};width:${size}px;height:${size}px">${escH(l.sym)}</i>`;
   const layerOf = cls => BY_CLS[cls] || { sym: '•', col: '#555', label: cls };
@@ -110,7 +114,7 @@ const MapView = (() => {
       <div class="map-pop" id="pres" hidden></div>
       <div class="map-pop layers" id="layers" hidden></div>
       <div class="mapctl"><span class="zgrp" role="group" aria-label="Zoom"><button id="zin" aria-label="Zoom in" title="Zoom in">+</button><button id="zout" aria-label="Zoom out" title="Zoom out">−</button></span>
-        <button id="zhome" aria-label="Go to my area" title="My area"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg></button><button id="map-us" aria-label="Whole United States" title="Whole US">US</button>
+        <button id="zhome" aria-label="Go to my area" title="My area"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7v9h-6v-6H9v6H3z"/></svg></button><button id="map-us" aria-label="Whole map" title="Whole map">All</button>
         <button id="map-full" aria-label="Full screen" title="Full screen">${FULL[0]}</button><button id="map-3d" aria-label="3D terrain view" title="3D view">3D</button><button id="map-photo" aria-label="Aerial photos" aria-pressed="false" title="Aerial photos">🛰</button></div>
       <div class="map-card" id="card" hidden></div>
       <div class="map-tip" id="tip" hidden></div>
@@ -178,7 +182,7 @@ const MapView = (() => {
       describe(info); if (openWhole) fit(wholeMap(), 0.92, true); coverage(); draw();
       $('mdata').innerHTML = info.datasets.map(d => `<li class="row" style="display:block"><b>${escH(d.label)}</b><span class="muted">${escH(d.status)}</span>${d.bytes ? ` · ${(d.bytes / 1073741824).toFixed(1)} GB` : ''}</li>`).join('') +
         (st.have && !st.have.size ? '' : `<li class="row small muted" style="display:block">${st.have ? '' : 'Not drawn yet: forest types. '}Resource layers are records — fish, wells, mines and crops show where they were recorded or mapped, not proof of what is there now.</li>`);
-    }).catch(() => { $('mdata').innerHTML = '<li class="muted">Map details unavailable.</li>'; if (openWhole && st) fit(US, 0.92, true) });
+    }).catch(() => { $('mdata').innerHTML = '<li class="muted">Map details unavailable.</li>'; if (openWhole && st) fit(wholeMap(), 0.92, true) });
     // When map data changes (national build, water import), quietly refresh visible tiles; old tiles stay up until new ones arrive.
     st.nationalTimer = setInterval(async () => {
       if (!st) return;
