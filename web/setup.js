@@ -91,7 +91,20 @@
   /* state maps (docs/SETUP-API.md, State maps). The person picks the state; Lastbook never looks for where it is */
   const maps = () => ((S.manifest && S.manifest.maps) || []).slice().sort((a, b) => String(a.title).localeCompare(String(b.title)));   // by name, as people look for theirs
   const mapById = id => maps().find(m => m.id === id);
-  const mapName = id => id === 'us' ? 'the whole US' : (mapById(id) || {}).title || id;
+  /* Regions built outside the US manifest (packaging/regions.py, tools/build_region_map.py) still have
+     a name to show when one is installed on this computer. */
+  const REGION_NAMES = {
+    'BR-SP': { en: 'Brazil — São Paulo', pt: 'Brasil — São Paulo' },
+    'BR-RJ': { en: 'Brazil — Rio de Janeiro', pt: 'Brasil — Rio de Janeiro' },
+    'BR-MG': { en: 'Brazil — Minas Gerais', pt: 'Brasil — Minas Gerais' },
+    'BR-ES': { en: 'Brazil — Espírito Santo', pt: 'Brasil — Espírito Santo' },
+  };
+  const regionName = id => {
+    const r = REGION_NAMES[id];
+    return r ? (window.LB && LB.lang() === 'pt-BR' ? r.pt : r.en) : null;
+  };
+  const mapName = id => id === 'us' ? (window.LB && LB.lang() === 'pt-BR' ? 'o mapa inteiro' : 'the whole US')
+    : (mapById(id) || {}).title || regionName(id) || id;
   /* the detailed map the library will have once the chosen pack is in: the person's state map, or the one the pack carries */
   const PACK_MAP = { medium: 'CA', all: 'us' };   // what the packs carry today; a manifest packs[].map, when there, wins
   const packMap = id => { const p = packById(id) || {}; return 'map' in p ? p.map || null : PACK_MAP[id] || null };
