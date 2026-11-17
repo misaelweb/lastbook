@@ -472,13 +472,184 @@
     'Brasil': 'Brasil',
     'Brazil': 'Brasil',
     'São Paulo': 'São Paulo',
+
+    /* ---------------- second pass: screens filled in by the scripts ---------------- */
+    'Map — Lastbook': 'Mapa — Lastbook',
+    'Map · Lastbook': 'Mapa · Lastbook',
+    'Copied ✓': 'Copiado ✓',
+    'Copied': 'Copiado',
+    'Saves to': 'Salva em',
+    'Your area': 'Sua área',
+    'Map style': 'Estilo do mapa',
+    'Zoom here': 'Aproximar aqui',
+    'Start over': 'Começar de novo',
+    'Keep going': 'Continuar',
+    'Show on map': 'Mostrar no mapa',
+    'Export chat': 'Exportar conversa',
+    'Go to Videos': 'Ir para Vídeos',
+    'What’s in it': 'O que tem dentro',
+    'Space needed': 'Espaço necessário',
+    'Choose again': 'Escolher de novo',
+    'Other ways in': 'Outras formas de acessar',
+    'Your question': 'Sua pergunta',
+    'Asking about:': 'Perguntando sobre:',
+    'Related guides': 'Guias relacionados',
+    'Still arriving': 'Ainda chegando',
+    'Select a state': 'Selecione um estado',
+    'Choose your state': 'Escolha seu estado',
+    'Loading videos…': 'Carregando vídeos…',
+    'Online original': 'Original online',
+    'Loading places…': 'Carregando lugares…',
+    'About this video': 'Sobre este vídeo',
+    'Copy coordinates': 'Copiar coordenadas',
+    'Delete all chats': 'Apagar todas as conversas',
+    'Add the local AI': 'Adicionar a IA local',
+    'What do you need?': 'Do que você precisa?',
+    'About this source': 'Sobre esta fonte',
+    'Nothing saved yet': 'Nada salvo ainda',
+    'Supplies planning': 'Planejamento de suprimentos',
+    'Start with a guide': 'Comece por um guia',
+    'Gap closure report': 'Relatório de lacunas',
+    'Mine-tailings dam:': 'Barragem de rejeitos:',
+    'On this computer ·': 'Neste computador ·',
+    'Your learning route': 'Sua trilha de aprendizado',
+    'Not in this library': 'Não está nesta biblioteca',
+    'Loading transcript…': 'Carregando transcrição…',
+    'Open the full guide': 'Abrir o guia completo',
+    'Government guidance': 'Orientação governamental',
+    'Manufacturer manual': 'Manual do fabricante',
+    'Sources and credits': 'Fontes e créditos',
+    'Using it on a phone': 'Usar no celular',
+    'Writing the answer…': 'Escrevendo a resposta…',
+    'Delete it for good?': 'Apagar de vez?',
+    'What this map covers': 'O que este mapa cobre',
+    'Library and local AI': 'Biblioteca e IA local',
+    'Not for this computer': 'Não serve para este computador',
+    'Not installed · about': 'Não instalado · cerca de',
+    'Open the file directly': 'Abrir o arquivo diretamente',
+    'Starting the local AI…': 'Iniciando a IA local…',
+    'Searching the library…': 'Buscando na biblioteca…',
+    'Not linked to a source': 'Não vinculado a uma fonte',
+    'Found on this computer': 'Encontrado neste computador',
+    'Sources and permissions': 'Fontes e permissões',
+    'How sources are labelled': 'Como as fontes são identificadas',
+    'Learning pathways report': 'Relatório de trilhas de aprendizado',
+    'Kept on this device only.': 'Mantido apenas neste dispositivo.',
+    'What this guide does not do': 'O que este guia não faz',
+    'Make the map center my area': 'Definir o centro do mapa como minha área',
+    'Reading the pages it found…': 'Lendo as páginas encontradas…',
+    'Updated edition available ·': 'Edição atualizada disponível ·',
+    'Searching the encyclopedias…': 'Buscando nas enciclopédias…',
+    'What the assistant can’t see': 'O que o assistente não vê',
+    'Use the file you already have': 'Usar o arquivo que você já tem',
+    'The old library is still here': 'A biblioteca antiga continua aqui',
+    'University / extension service': 'Universidade / serviço de extensão',
+    'Community-written encyclopedia': 'Enciclopédia escrita pela comunidade',
+    'Pages you open will appear here.': 'As páginas que você abrir aparecerão aqui.',
+    'Hesperian community health guide': 'Guia de saúde comunitária Hesperian',
+    'Keep chat history on this device': 'Manter o histórico de conversas neste dispositivo',
+    'Choose an existing library folder': 'Escolher uma pasta de biblioteca existente',
+    'Stop and throw away the download?': 'Parar e descartar o download?',
+    'About this library and its sources': 'Sobre esta biblioteca e suas fontes',
+    'folder or Downloads, then Look again.': 'pasta ou Downloads e use Ver de novo.',
+    'Choose a library zip or AI model file': 'Escolher um zip de biblioteca ou arquivo de modelo de IA',
+    'Copy failed — select the numbers above': 'Falha ao copiar — selecione os números acima',
+    'Getting-ready readings from every guide': 'Leituras de preparação de cada guia',
+    'Nothing here matches. Try another word.': 'Nada corresponde aqui. Tente outra palavra.',
+    'Numbers are places in the current view.': 'Os números são lugares na visualização atual.',
+    'Local AI ready · it starts when you ask': 'IA local pronta · inicia quando você perguntar',
+    'Encyclopedia article · community-written': 'Artigo de enciclopédia · escrito pela comunidade',
+    'Add the local AI to get written answers.': 'Adicione a IA local para receber respostas escritas.',
+    'Nothing picked for this yet — try searching.': 'Nada escolhido para isto ainda — tente buscar.',
+    'No videos match. Try another word or length.': 'Nenhum vídeo corresponde. Tente outra palavra ou duração.',
+    '— “Where There Is No Doctor” and related books.': '— “Onde Não Há Médico” e livros relacionados.',
+    'the model’s own wording, not linked to a source': 'palavras do próprio modelo, sem vínculo com uma fonte',
+    'Store water and food, plan for outages, pack kits': 'Estoque água e comida, planeje quedas e monte kits',
+    'It is about 17 GB, and runs on this computer only.': 'Tem cerca de 17 GB e roda apenas neste computador.',
+    'Try fewer words, or another word for the same thing.': 'Tente menos palavras ou outra palavra para a mesma coisa.',
+    'The home button returns here. Saved on this device only.':
+      'O botão de casa volta para cá. Salvo apenas neste dispositivo.',
+    'Couldn’t load the list. Zoom in to see individual places.':
+      'Não foi possível carregar a lista. Aproxime para ver lugares individuais.',
+    'If this keeps happening, close Lastbook and open it again.':
+      'Se continuar acontecendo, feche o Lastbook e abra de novo.',
+    'Couldn’t load places for this view — move the map to retry.':
+      'Não foi possível carregar os lugares desta visualização — mova o mapa para tentar de novo.',
+    'Choose Save on any page, video, article or answer to keep it here.':
+      'Use Salvar em qualquer página, vídeo, artigo ou resposta para guardar aqui.',
+    'Answers questions from the library, in plain words. Works offline.':
+      'Responde perguntas a partir da biblioteca, em linguagem simples. Funciona offline.',
+    'Watch it done — practical how-tos first, then channels and courses.':
+      'Veja como se faz — instruções práticas primeiro, depois canais e cursos.',
+    'Pages found so far — you can open them while the answer is written:':
+      'Páginas encontradas até agora — você pode abri-las enquanto a resposta é escrita:',
+    'it holds mine waste, not usable water. Do not drink, swim or fish here.':
+      'ela guarda rejeitos de mineração, não água utilizável. Não beba, não nade e não pesque aqui.',
+    'Choose your state and library. Lastbook downloads them for offline use.':
+      'Escolha seu estado e a biblioteca. O Lastbook baixa tudo para usar offline.',
+    'Address not found in your offline data. Check the house number and street.':
+      'Endereço não encontrado nos dados offline. Confira o número e a rua.',
+    'Find an address, town or ZIP': 'Encontrar cidade, bairro ou lugar',
+    'Find an address, town, ZIP code or place': 'Encontrar endereço, cidade, CEP ou lugar',
+    'Local streets, buildings, water and places to get help. Available offline.':
+      'Ruas locais, edifícios, água e lugares de ajuda. Disponível offline.',
+    'Nothing here replaces trained help. Each guide shows the sources’ own limits.':
+      'Nada aqui substitui ajuda treinada. Cada guia mostra os limites das próprias fontes.',
+    'Pick what’s happening, search in your own words, or ask the library a question.':
+      'Escolha o que está acontecendo, busque com suas palavras ou faça uma pergunta à biblioteca.',
+    'All includes every state map. Choose your state for offline street-address search.':
+      'Tudo inclui todos os mapas. Escolha seu estado para busca de endereços offline.',
+    'Shopping lists and carts in older reports are plans, not proof of supplies you own.':
+      'Listas de compras em relatórios antigos são planos, não prova do que você tem.',
+    'Reading and watching are not the same as practising. Your ticks stay on this device.':
+      'Ler e assistir não é o mesmo que praticar. Suas marcações ficam neste dispositivo.',
+    'Your saved things, learning routes, encyclopedias and every manual in the collection.':
+      'O que você salvou, trilhas de aprendizado, enciclopédias e todos os manuais da coleção.',
+    'Get an answer built from the manuals, with the exact pages and video moments it came from':
+      'Receba uma resposta feita a partir dos manuais, com as páginas e os momentos exatos de onde veio',
+    'Chats stay on this device. Nothing is sent anywhere except this computer’s own assistant.':
+      'As conversas ficam neste dispositivo. Nada é enviado para fora, só para o assistente deste computador.',
+    'Ticks are your own notes on this device. Reading or watching is not the same as practising safely.':
+      'As marcações são suas anotações neste dispositivo. Ler ou assistir não é o mesmo que praticar com segurança.',
+    'Offline: works with no internet. Shows what was mapped by 25 Oct 2026 — not damage, closures or hazards.':
+      'Offline: funciona sem internet. Mostra o que foi mapeado até 25/10/2026 — não danos, interdições ou riscos.',
+    'A shopping list or cart isn’t the same as supplies you own, and reading isn’t the same as a practised plan.':
+      'Lista de compras não é o mesmo que suprimentos que você tem, e ler não é o mesmo que um plano praticado.',
+    'Readings for getting ready before water, power or services stop — gathered from each guide. One area at a time.':
+      'Leituras para se preparar antes de faltar água, energia ou serviços — reunidas de cada guia. Uma área por vez.',
+    'Public manuals, health guides, courses, videos and encyclopedias kept on this computer, so it works when the internet and phones don’t.':
+      'Manuais públicos, guias de saúde, cursos, vídeos e enciclopédias mantidos neste computador, para funcionar quando a internet e os telefones falharem.',
+    'Only videos already downloaded are shown. Many have no captions, so the transcript search and the assistant can’t see what’s said in them.':
+      'Só aparecem vídeos já baixados. Muitos não têm legendas, então a busca em transcrições e o assistente não veem o que é dito neles.',
+    'Answers are built only from the manuals, guides and video transcripts on this computer — with the exact page or video moment for each point.':
+      'As respostas são feitas apenas com os manuais, guias e transcrições deste computador — com a página ou o momento exato de cada ponto.',
+    'A video shows how one person did something. Watching isn’t practice, and it may not match current safety guidance — check a manual for anything risky.':
+      'Um vídeo mostra como uma pessoa fez algo. Assistir não é praticar, e pode não corresponder à orientação atual de segurança — consulte um manual para qualquer coisa arriscada.',
+    'Offline survival and rebuilding guide: first aid, water, food, power, shelter, videos, maps and skills — works without internet.':
+      'Guia offline de sobrevivência e reconstrução: primeiros socorros, água, comida, energia, abrigo, vídeos, mapas e habilidades — funciona sem internet.',
+    'Brazil — São Paulo': 'Brasil — São Paulo',
+    'Brazil — Rio de Janeiro': 'Brasil — Rio de Janeiro',
+    'Brazil — Minas Gerais': 'Brasil — Minas Gerais',
+    'Brazil — Espírito Santo': 'Brasil — Espírito Santo',
+    '— FEMA, CDC, EPA, USDA, NOAA, National Park Service and similar.':
+      '— FEMA, CDC, EPA, USDA, NOAA, Serviço de Parques Nacionais dos EUA e similares.',
+    '— WHO, Red Cross / Red Crescent, MSF, UNICEF, Sphere, St John Ambulance.':
+      '— OMS, Cruz Vermelha / Crescente Vermelho, MSF, UNICEF, Sphere, St John Ambulance.',
+    '— e.g. National Center for Home Food Preservation, UC extension.':
+      '— por exemplo, National Center for Home Food Preservation, extensão da UC.',
   };
 
   const DICT = Object.create(null);
   for (const k of Object.keys(PT)) DICT[normalize(k)] = PT[k];
 
   function normalize(s) {
-    return String(s).replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+    return String(s)
+      .replace(/\u00a0/g, ' ')
+      .replace(/[\u2010-\u2015\u2212]/g, '-')      // dashes: the writing varies between files
+      .replace(/[\u2018\u2019\u201b]/g, "'")
+      .replace(/[\u201c\u201d]/g, '"')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   function detect() {
