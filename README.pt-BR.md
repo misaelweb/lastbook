@@ -77,9 +77,20 @@ Para outras regiões já registradas (`BR-RJ`, `BR-MG`, `BR-ES`), troque `--regi
 ### Por que não aparece na tela de configuração
 
 A configuração do Lastbook lista os mapas do `manifest-v1.json` publicado em
-`downloads.lastbook.org`. Este conjunto é local, então ele é instalado pela ferramenta acima. Se
-você publicar seus próprios arquivos e um manifesto, ele passa a aparecer na configuração como
-qualquer mapa de estado.
+`downloads.lastbook.org`. Este fork troca essa lista pelo registro de regiões do próprio build
+(`engine/regions.py`): a tela mostra **somente os estados que vêm no Brasil**, hoje São Paulo, e
+instala o mapa a partir do zip que já está no computador, sem baixar nada.
+
+O zip precisa estar em `Downloads`, `Desktop`, `Documents` ou na pasta indicada por
+`LASTBOOK_MAPS`. O atalho [D:\Abrir-Lastbook.cmd](D:/Abrir-Lastbook.cmd) define
+`LASTBOOK_MAPS=D:\lastbook-work` e `LASTBOOK_HOME=D:\`, então o setup acha
+`Lastbook-Map-BR-SP.zip` e coloca a biblioteca em `D:\LastbookData`.
+
+### Tela de configuração
+
+O setup continua sendo a primeira tela: nele você escolhe o tamanho da biblioteca (Pequeno, Médio
+ou Tudo), a IA local e o mapa. Nada disso substitui o resto do app — depois de instalar, a barra
+lateral abre Vídeos, Mapa e Conversa, com todos os guias, manuais e vídeos da biblioteca.
 
 ## Rodar a partir do código
 
