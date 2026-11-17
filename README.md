@@ -82,13 +82,13 @@ The setup contract, including state maps, is in [docs/SETUP-API.md](docs/SETUP-A
 | `app/` | The desktop app: entry point (`main.py`), the no-port bridge, the macOS, Windows and Linux shells, and tests (`app/tests/`). |
 | `engine/` | Paths and data-folder lookup, library access, saved pages, offline address search (`address_search.py`), the update check (`update.py`) and first-run setup (`engine/setup/`). `engine/vendor-macos/` holds pypdfium2 for the Mac build. |
 | `server.py`, `assistant.py`, `retrieval.py`, `llm_local.py` | The engine: request handler, the assistant and its citation checks, keyword plus meaning-based search, and the local AI (model pins, fit check, runner control). |
-| `web/` | The interface, in plain HTML, CSS and JavaScript with no build step and nothing loaded from the web. `setup.*` is the setup screen, `update.js` the update check in About. |
+| `web/` | The interface, in plain HTML, CSS and JavaScript with no build step and nothing loaded from the web. `setup.*` is the setup screen, `update.js` the update check in About, `i18n.js` the interface language (Portuguese, Brazil, alongside English). |
 | `content/` | The curated guides (`topics/*.json`) and what curators looked for and did not find (`gaps.json`). Format: `content/SCHEMA.md`. |
 | `packaging/` | App builds (macOS, Windows and Linux), the Windows installer and its front (`setup_stub/`), signing helper (`sign_windows.ps1`), icons (`icon/`), pack and state-map builders, release manifest, TLS roots tools, package scans, and `packaging/llm/` (the local AI runner). |
 | `derived/packs/pack-spec.json` | What goes into each download pack (Small, Medium, All and add-ons) and each state map. Everything else under `derived/` is generated and not kept here. |
 | `tools/` | Builders for the offline map, addresses and place finder, plus curator helpers (`libq.py`, `validate_topics.py`). |
 | `website/`, `website-next/` | The earlier website and the current static lastbook.org site, respectively. |
-| `docs/` | The setup contract (`SETUP-API.md`), how the offline map is put together (`MAPS.md`) and notes on the library server version (`LIBRARY-SERVER.md`). |
+| `docs/` | The setup contract (`SETUP-API.md`), how the offline map is put together (`MAPS.md`, and `REGIONS.md` for maps outside the US) and notes on the library server version (`LIBRARY-SERVER.md`). Portuguese overview of this fork: [`README.pt-BR.md`](README.pt-BR.md). |
 
 ## Run from source
 
